@@ -606,9 +606,18 @@
         }
       });
 
-      const runner = Runner.create();
-      Runner.run(runner, engine);
-      Render.run(render);
+      const TARGET_FPS = 24;
+      const STEP_MS = 1000 / TARGET_FPS;
+      let lastStep = 0;
+      function gameLoop(timestamp) {
+        requestAnimationFrame(gameLoop);
+        if (timestamp - lastStep >= STEP_MS) {
+          lastStep = timestamp;
+          Engine.update(engine, STEP_MS);
+          Render.world(render);
+          if (typeof fxTick === 'function') fxTick();
+        }
+      }
 
       // Mobile: prevent scroll/bounce/gesture zoom while playing
       document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
@@ -744,7 +753,7 @@
         const skin = { friction: 0.65, frictionStatic: 0.8, restitution: 0.06, frictionAir: 0.02, density: 0.0012 };
         const limb = { friction: 0.65, frictionStatic: 0.8, restitution: 0.05, frictionAir: 0.025, density: 0.0010 };
 
-        const headRadiusX = 24*scale, headRadiusY = 32*scale;
+        const headRadiusX = 28*scale, headRadiusY = 32*scale;
         const headVerts = [];
         for (let i = 0; i < 24; i++) {
           const t = (i / 24) * Math.PI * 2;
@@ -1124,10 +1133,11 @@
         fctx.clearRect(0,0,fx.width,fx.height);
         fctx.globalCompositeOperation = 'lighter';
 
+        const FPS_RATIO = 60 / TARGET_FPS;
         particles = particles.filter(pt => pt.life > 0);
         for (const pt of particles) {
-          pt.life -= 0.014;
-          pt.vy += 0.10;
+          pt.life -= 0.014 * FPS_RATIO;
+          pt.vy += 0.10 * FPS_RATIO;
           pt.x += pt.vx;
           pt.y += pt.vy;
           pt.rot += pt.vr;
@@ -1142,9 +1152,8 @@
 
         fctx.shadowBlur = 0;
         fctx.globalCompositeOperation = 'source-over';
-        requestAnimationFrame(fxTick);
       }
-      fxTick();
+      requestAnimationFrame(gameLoop);
 
       function updateCtaTextFromClicks() {
         if (hasCelebrated) return;
