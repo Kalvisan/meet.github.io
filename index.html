@@ -234,11 +234,11 @@
     }
     .modal-content{
       position:relative;
-      max-width: min(420px, 92vw);
+      max-width: min(680px, 96vw);
       width:100%;
-      max-height: min(90vh, 620px);
+      max-height: min(90vh, 640px);
       margin:auto;
-      padding: clamp(16px, 4vh, 40px) clamp(16px, 4vw, 36px);
+      padding: clamp(12px, 3vh, 24px) clamp(12px, 3vw, 24px);
       border-radius: clamp(16px, 4vw, 24px);
       background: linear-gradient(165deg, #1a1410 0%, #0f0c0a 50%, #0a0806 100%);
       border:2px solid rgba(232,92,26,.35);
@@ -246,11 +246,25 @@
         0 0 0 1px rgba(255,255,255,.08) inset,
         0 28px 60px rgba(0,0,0,.55),
         0 0 80px rgba(255,77,166,.12);
-      text-align:center;
       font-family: Georgia, "Times New Roman", serif;
       overflow-y:auto;
       -webkit-overflow-scrolling: touch;
     }
+    .invitation-cols{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(16px, 3vw, 24px);
+      align-items: start;
+      text-align: center;
+    }
+    @media (min-width: 520px){
+      .invitation-cols{ grid-template-columns: 1fr 1fr; text-align: left; }
+      .invitation-calendar{ text-align: left; }
+      .invitation-greeting .invitation-body{ margin-left: 0; margin-right: 0; }
+    }
+    .invitation-greeting{ display: flex; flex-direction: column; gap: 0; min-width: 0; }
+    .invitation-calendar{ display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+    .invitation-calendar .invitation-dt-quick{ justify-content: flex-start; }
     .invitation-ornament{
       font-size: clamp(20px, 5vw, 28px);
       letter-spacing: clamp(0.2em, 2vw, 0.4em);
@@ -276,10 +290,10 @@
     }
     .invitation-date span{ color: var(--accent2); }
     .invitation-body{
-      font-size: clamp(14px, 3.5vw, 17px);
-      line-height:1.6;
+      font-size: clamp(13px, 2.8vw, 16px);
+      line-height:1.55;
       color: rgba(255,255,255,.95);
-      margin:0 0 clamp(16px, 3vh, 28px);
+      margin:0 0 clamp(12px, 2vh, 20px);
       max-width:320px;
       margin-left:auto;
       margin-right:auto;
@@ -308,6 +322,7 @@
     .who-option:hover, .who-option:focus{ border-color: var(--accent); background: rgba(232,92,26,.2); outline: none; color: #fff; }
     .who-option img{ width: 64px; height: 64px; border-radius: 50%; object-fit: cover; }
     .who-option span{ font-weight: 700; font-size: clamp(14px, 3.5vw, 16px); text-align: center; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.4); }
+    .invitation-cols + .modal-close{ margin-top: clamp(12px, 2vh, 20px); width: 100%; }
     .modal-close{
       padding: clamp(16px, 3vh, 20px) clamp(28px, 6vw, 40px);
       border-radius: clamp(14px, 3vw, 18px);
@@ -329,7 +344,7 @@
     .modal-close:hover{ box-shadow: 0 0 0 1px rgba(0,0,0,.2) inset, 0 14px 40px rgba(232,92,26,.55), 0 6px 20px rgba(0,0,0,.4); }
     .modal-close:active{ transform: scale(0.98); box-shadow: 0 8px 24px rgba(232,92,26,.45); }
     @media (max-height: 420px){
-      .modal-content{ max-height: 95vh; padding: 12px 16px; }
+      .modal-content{ max-height: 95vh; padding: 12px 16px; overflow-y: auto; }
       .invitation-ornament{ font-size: 18px; margin-bottom: 2px; }
       .invitation-label{ margin-bottom: 6px; font-size: 9px; }
       .invitation-date{ font-size: 18px; margin-bottom: 6px; }
@@ -338,7 +353,7 @@
       .modal-close{ padding: 10px 18px; font-size: 13px; }
     }
     @media (max-width: 380px){
-      .modal-content{ padding: 20px 18px; }
+      .modal-content{ padding: 14px 12px; max-width: 100vw; }
       .invitation-ornament{ letter-spacing: 0.15em; font-size: 22px; }
       .invitation-date{ font-size: 20px; }
     }
@@ -401,26 +416,32 @@
     <div class="modal" id="touchModal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
       <div class="modal-backdrop" id="modalBackdrop"></div>
       <div class="modal-content">
-        <p class="invitation-ornament" aria-hidden="true">☕? 🍵?</p>
-        <p class="invitation-label">Uzaicinājums tikties</p>
-        <h2 id="modalTitle" class="invitation-date">Izvēlies sev ērtāko laiku</h2>
-        <p class="invitation-body">
-          Mēs vēlamies atkārtoti ar tevi tikties un parunāties. Izvēlies sev vēlamāko laiku, kad vēlies ar mums 1 stundu parunāties (uz kafiju vai tēju).
-        </p>
-        <div class="invitation-datetime">
-          <label class="invitation-dt-label">Datums</label>
-          <div class="invitation-dt-quick" id="invitationDateQuick" role="group" aria-label="Ātrā datuma izvēle">
-            <button type="button" class="invitation-dt-chip active" data-days="7" id="dateChip7">Pēc nedēļas</button>
-            <button type="button" class="invitation-dt-chip" data-days="14">Pēc 2 nedēļām</button>
+        <div class="invitation-cols">
+          <div class="invitation-greeting">
+            <p class="invitation-ornament" aria-hidden="true">☕ 🔥</p>
+            <p class="invitation-label">Uzaicinājums tikties</p>
+            <h2 id="modalTitle" class="invitation-date">Izvēlies sev ērtāko laiku</h2>
+            <p class="invitation-body">
+              Mēs vēlamies atkārtoti ar tevi tikties un parunāties. Izvēlies sev vēlamāko laiku, kad vēlies ar mums 1 stundu parunāties (uz kafiju vai tēju).
+            </p>
+            <p class="invitation-signature">Līdz tikšanai, <span class="name">HoloKRAKEN</span></p>
           </div>
-          <div class="invitation-dt-custom">
-            <label class="invitation-dt-label" for="invitationDate">Vai izvēlies citu datumu</label>
-            <input type="date" id="invitationDate" class="invitation-dt-input" min="" aria-label="Izvēlies datumu">
+          <div class="invitation-calendar">
+            <div class="invitation-datetime">
+              <label class="invitation-dt-label">Datums</label>
+              <div class="invitation-dt-quick" id="invitationDateQuick" role="group" aria-label="Ātrā datuma izvēle">
+                <button type="button" class="invitation-dt-chip active" data-days="7" id="dateChip7">Pēc nedēļas</button>
+                <button type="button" class="invitation-dt-chip" data-days="14">Pēc 2 nedēļām</button>
+              </div>
+              <div class="invitation-dt-custom">
+                <label class="invitation-dt-label" for="invitationDate">Vai izvēlies citu datumu</label>
+                <input type="date" id="invitationDate" class="invitation-dt-input" min="" aria-label="Izvēlies datumu">
+              </div>
+              <label class="invitation-dt-label" for="invitationTime">Laiks (sākums, 1h)</label>
+              <select id="invitationTime" class="invitation-dt-input" aria-label="Izvēlies laiku"></select>
+            </div>
           </div>
-          <label class="invitation-dt-label" for="invitationTime">Laiks (sākums, 1h)</label>
-          <select id="invitationTime" class="invitation-dt-input" aria-label="Izvēlies laiku"></select>
         </div>
-        <p class="invitation-signature">Līdz tikšanai, <span class="name">HoloKRAKEN</span></p>
         <button type="button" class="modal-close" id="modalClose">Pieņemu uzaicinājumu</button>
       </div>
     </div>
@@ -449,6 +470,13 @@
       const isLandscape = () => window.innerWidth >= window.innerHeight;
 
       const PLACEHOLDER_IMG = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><circle cx="32" cy="32" r="30" fill="#444"/></svg>');
+      function personImageSrc(val) {
+        if (!val || !val.trim()) return PLACEHOLDER_IMG;
+        const s = val.trim();
+        if (s.startsWith('data:')) return s;
+        if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('./') || /\.(png|jpg|jpeg|gif|webp)$/i.test(s)) return s;
+        return 'data:image/png;base64,' + s;
+      }
       function showWhoModal() {
         whoModal.classList.add('show');
         whoGrid.innerHTML = '';
@@ -458,7 +486,7 @@
           opt.className = 'who-option';
           const img = document.createElement('img');
           img.alt = '';
-          img.src = person.imageBase64 ? (person.imageBase64.startsWith('data:') ? person.imageBase64 : 'data:image/png;base64,' + person.imageBase64) : PLACEHOLDER_IMG;
+          img.src = personImageSrc(person.imageBase64 || person.imageUrl || '');
           img.onerror = () => { img.src = PLACEHOLDER_IMG; };
           const span = document.createElement('span');
           span.textContent = person.name;
