@@ -2,7 +2,9 @@
 <html lang="lv">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Tikšanās uz kafiju?</title>
   <style>
     .debug-fps{
@@ -32,8 +34,26 @@
       --shadow: rgba(0,0,0,.45);
     }
 
-    html,body{height:100%;margin:0;overflow:hidden;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
+    html{
+      height:100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin:0;
+      overflow:hidden;
+      background: var(--bg1);
+      -webkit-text-size-adjust:100%;
+      touch-action: manipulation;
+    }
     body{
+      height:100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin:0;
+      overflow:hidden;
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      touch-action: manipulation;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      box-sizing: border-box;
       background:
         radial-gradient(1200px 700px at 20% 20%, rgba(232,92,26,.18), transparent 60%),
         radial-gradient(900px 600px at 80% 30%, rgba(255,107,53,.12), transparent 55%),
@@ -363,6 +383,8 @@
       cursor: pointer;
       transition: border-color .2s, background .2s;
       -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
       min-height: 44px;
       display: inline-flex;
       align-items: center;
@@ -1013,7 +1035,8 @@
         if (!dateEl.dataset.dateInit) {
           dateEl.dataset.dateInit = '1';
           chips.forEach(c => {
-            c.addEventListener('click', () => setDateFromDays(parseInt(c.getAttribute('data-days'), 10)));
+            const handler = () => setDateFromDays(parseInt(c.getAttribute('data-days'), 10));
+            c.addEventListener('pointerup', (e) => { e.preventDefault(); handler(); }, { passive: false });
           });
           dateEl.addEventListener('change', updateChipsFromInput);
           dateEl.addEventListener('input', updateChipsFromInput);
