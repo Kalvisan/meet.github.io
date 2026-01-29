@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Tikšanās uz kafiju</title>
   <style>
+    .debug-fps{
+      display: none;
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      z-index: 9999;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: rgba(0,0,0,.8);
+      color: #0f0;
+      font-family: monospace;
+      font-size: 12px;
+      pointer-events: none;
+    }
+    .debug-fps.show{ display: block; }
     :root{
       --bg1:#0a0a0a;
       --bg2:#1a1410;
@@ -468,6 +483,8 @@
   </style>
 </head>
 <body>
+  <!-- Debug: atver lapu ar ?debug=1 vai ?fps=1, lai redzētu FPS un kadra laiku (ms). Palīdz atrast, kur ierīce lēnā. -->
+  <div id="debugFps" class="debug-fps" aria-hidden="true"></div>
   <div id="rotateOverlay" class="rotate-overlay" aria-live="polite">
     <div class="icon" aria-hidden="true"></div>
     <p><br>Pagrieziet ekrānu, lai spēlētu.</p>
@@ -609,13 +626,26 @@
       const TARGET_FPS = 24;
       const STEP_MS = 1000 / TARGET_FPS;
       let lastStep = 0;
+      const debugFpsEl = document.getElementById('debugFps');
+      const showDebugFps = debugFpsEl && /[?&](debug|fps)=1/i.test(location.search);
+      if (showDebugFps) debugFpsEl.classList.add('show');
+      let lastTickTime = 0;
+      let lastFrameTime = STEP_MS;
       function gameLoop(timestamp) {
         requestAnimationFrame(gameLoop);
         if (timestamp - lastStep >= STEP_MS) {
+          const t0 = performance.now();
           lastStep = timestamp;
           Engine.update(engine, STEP_MS);
           Render.world(render);
           if (typeof fxTick === 'function') fxTick();
+          const tickDuration = performance.now() - t0;
+          if (lastTickTime > 0) lastFrameTime = timestamp - lastTickTime;
+          lastTickTime = timestamp;
+          if (showDebugFps && debugFpsEl) {
+            const actualFps = lastFrameTime > 0 ? (1000 / lastFrameTime).toFixed(1) : '—';
+            debugFpsEl.textContent = 'FPS: ' + actualFps + ' (mērķis 24) | Kadrs: ' + tickDuration.toFixed(0) + ' ms';
+          }
         }
       }
 
